@@ -1,17 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Hello Electron!</title>
+  <meta charset="UTF-8">
+  <title>CU</title>
 </head>
 <body>
   <h1>Welcome to Electron!</h1>
   <button id="btn">Click Me</button>
   <script>
-    const { ipcRenderer } = require('electron');
-    const fs = require('fs');
-
     document.getElementById('btn').addEventListener('click', () => {
-      fs.writeFileSync('test.txt', 'Hello from Electron!');
+      window.electronAPI.writeFile('test.txt', 'Hello from Electron!');
       alert('File created!');
     });
   </script>
