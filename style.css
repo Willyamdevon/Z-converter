@@ -798,3 +798,7 @@ html, body {
   color: rgba(141, 141, 141, 0.322);
   transition: 200ms;
 }
+
+#maximize span {
+  font-size: 19px
+}
