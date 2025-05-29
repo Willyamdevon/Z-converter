@@ -747,3 +747,18 @@ video {
   transform: scale(0.8); /* Масштабирование интерфейса */
   transform-origin: top center; /* Чтобы не смещалось в сторону */
 }
+
+
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#webcrumbs {
+  width: 100%;
+  height: 100%;
+  font-family: 'Open Sans', sans-serif;
+}
