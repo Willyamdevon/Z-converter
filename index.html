@@ -6,6 +6,21 @@
   <title>File Converter</title>
   <link rel="stylesheet" href="style.css" />
 </head>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const details = document.querySelector("#webcrumbs details");
+
+    document.addEventListener("click", (event) => {
+      if (!details) return;
+
+      // Если клик вне details и details открыт
+      if (!details.contains(event.target) && details.open) {
+        details.removeAttribute("open");
+      }
+    });
+  });
+</script>
+
 <body class="bg-gradient-to-br from-slate-50 to-slate-100">
 
   <div id="webcrumbs" class="w-full h-full p-4 sm:p-6 md:p-8">
