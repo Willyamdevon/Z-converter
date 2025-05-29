@@ -691,7 +691,7 @@ video {
   --tw-text-opacity: 1;
   color: rgb(99 27 255 / var(--tw-text-opacity));
 }
-@media (min-width: 640px) {
+/* @media (min-width: 640px) {
   #webcrumbs .sm\:gap-5 {
     gap: 20px;
   }
@@ -710,7 +710,7 @@ video {
     padding-bottom: 12px;
     padding-top: 12px;
   }
-}
+} */
 @media (min-width: 768px) {
   #webcrumbs .md\:mb-8 {
     margin-bottom: 32px;
