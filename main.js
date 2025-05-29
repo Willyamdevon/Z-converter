@@ -1,25 +1,21 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
-const fs = require('fs');
-const path = require('path');
+const { app, BrowserWindow } = require('electron');
 
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  const win = new BrowserWindow({
     width: 800,
     height: 600,
+    minWidth: 600,
+    minHeight: 400,
+    maxWidth: 1200,
+    maxHeight: 900,
+    resizable: true, // или false, если хочешь зафиксированный размер
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'), // правильный путь
-      contextIsolation: true,
-      nodeIntegration: false,
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
-  mainWindow.loadFile('index.html');
+  win.loadFile('index.html');
 }
 
 app.whenReady().then(createWindow);
-
-// Обработка события на запись файла
-ipcMain.on('write-file', (event, filename, content) => {
-  const filePath = path.join(__dirname, filename); // можно изменить путь
-  fs.writeFileSync(filePath, content);
-});

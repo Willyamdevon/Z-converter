@@ -742,3 +742,7 @@ video {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
+#webcrumbs {
+  transform: scale(0.8); /* Масштабирование интерфейса */
+  transform-origin: top center; /* Чтобы не смещалось в сторону */
+}
