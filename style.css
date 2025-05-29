@@ -743,6 +743,7 @@ video {
   }
 }
 #webcrumbs {
+  padding-top: 40px;
   transform: scale(0.8); /* Масштабирование интерфейса */
   transform-origin: top center; /* Чтобы не смещалось в сторону */
 }
