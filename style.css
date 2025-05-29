@@ -762,3 +762,39 @@ html, body {
   height: 100%;
   font-family: 'Open Sans', sans-serif;
 }
+
+#custom-titlebar button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+#close {
+  color: black;
+  transition: 200ms;
+}
+
+#close:hover {
+  color: red;
+  transition: 200ms;
+}
+
+#minimize {
+  color: black;
+  transition: 200ms;
+}
+
+#minimize:hover {
+  color: rgba(141, 141, 141, 0.322);
+  transition: 200ms;
+}
+
+#maximize {
+  color: black;
+  transition: 200ms;
+}
+
+#maximize:hover {
+  color: rgba(141, 141, 141, 0.322);
+  transition: 200ms;
+}
