@@ -36,16 +36,20 @@
   <div id="webcrumbs" class="w-full h-full p-4 sm:p-6 md:p-8">
     <h1 class="text-3xl font-bold mb-6 text-primary-700">Let's convert!</h1>
 
-    <div class="mb-8">
-      <div class="border-2 border-dashed border-primary-300 rounded-xl p-10 transition-all hover:border-primary-500 bg-white cursor-pointer group">
-        <div class="flex flex-col items-center justify-center gap-4">
-          <span class="material-symbols-outlined text-6xl text-primary-400 group-hover:text-primary-600 transition-all">cloud_upload</span>
-          <p class="text-lg text-center">Drag and drop your files here<br /><span class="text-sm text-gray-500">or click to browse</span></p>
-          <input type="file" multiple class="hidden" />
+    <button id="selectBtn">
+      <div class="mb-8">
+        <div class="border-2 border-dashed border-primary-300 rounded-xl p-10 transition-all hover:border-primary-500 bg-white cursor-pointer group">
+          <div class="flex flex-col items-center justify-center gap-4">
+            <span class="material-symbols-outlined text-6xl text-primary-400 group-hover:text-primary-600 transition-all">cloud_upload</span>
+            <p class="text-lg text-center">Drag and drop your files here<br /><span class="text-sm text-gray-500">or click to browse</span></p>
+            <input type="file" multiple class="hidden" />
+          </div>
         </div>
       </div>
-    </div>
+    </button>
 
+    <div id="status"></div>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 md:gap-6 mb-6 md:mb-8">
       <button class="flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white py-2 sm:py-3 px-3 sm:px-4 rounded-lg transition-all transform hover:scale-105 shadow-md">
         <span class="material-symbols-outlined">upload_file</span>
@@ -70,12 +74,10 @@
             <div class="space-y-4">
               <div>
                 <label class="block text-sm font-medium mb-1">Output Format</label>
-                <select class="w-full border border-gray-300 rounded-md p-2 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all">
-                  <option>PDF</option>
-                  <option>PNG</option>
-                  <option>JPG</option>
-                  <option>SVG</option>
-                  <option>DOCX</option>
+                <select id="formatSelect" class="w-full border border-gray-300 rounded-md p-2 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 outline-none transition-all">
+                  <option value="jpg">JPG</option>
+                  <option value="png">PNG</option>
+                  <option value="ico">ICO</option>
                 </select>
               </div>
               <div>
@@ -115,7 +117,7 @@
       <div class="text-sm text-gray-500">
         Supported formats: PDF, DOCX, PNG, JPG, SVG, and more
       </div>
-      <button class="w-full md:w-auto bg-primary-600 hover:bg-primary-700 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2">
+      <button id="convertBtn" class="w-full md:w-auto bg-primary-600 hover:bg-primary-700 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-all transform hover:scale-105 shadow-md flex items-center justify-center gap-2" disabled>
         <span class="material-symbols-outlined">bolt</span>
         Start Conversion
       </button>
@@ -136,6 +138,7 @@
       });
     });
   </script>
+  <script src="renderer.js"></script>
 
 
 </body>

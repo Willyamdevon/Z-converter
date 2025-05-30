@@ -7,5 +7,10 @@
   },
   "devDependencies": {
     "electron": "^28.0.0"
+  },
+  "dependencies": {
+    "gifenc": "^1.0.3",
+    "icojs": "^0.19.5",
+    "sharp": "^0.34.2"
   }
 }
