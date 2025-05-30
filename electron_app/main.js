@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog, shell, ipcRenderer } = require('electron');
 const { convertPngToGif, convertJpgToGif, pngToJpg, jpgToPng } = require('./converterImages');
 const path = require('path');
 
@@ -41,8 +41,13 @@ function createWindow() {
       win.maximize();
     }
   });
+  
   ipcMain.on('window:close', () => win.close());
+
+  win.webContents.openDevTools() // DevTools
+
 }
+
 // Обработчик конвертации
 // ipcMain.handle('convert-file', async (_, { inputPath, outputFormat }) => {
 //   try {
@@ -100,4 +105,15 @@ ipcMain.handle('save-file-dialog', async (event, defaultPath) => {
   return result.filePath;
 });
 
+ipcMain.on('open-folder', (event, path) => {
+  // Открываем папку и выделяем файл (но не открываем его)
+  shell.showItemInFolder(path);
+});
+
+ipcMain.handle('open-folder-dialog', async () => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'] // Ключевое отличие!
+  });
+  return result.filePaths[0]; // Возвращаем первую выбранную папку
+});
 app.whenReady().then(createWindow);

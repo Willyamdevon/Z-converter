@@ -1,8 +1,8 @@
 const sharp = require('sharp');
 const { GIFEncoder, quantize, applyPalette } = require('gifenc');
 
-module.exports = {
-    async convertPngToGif(inputPath, outputPath) {
+module.exports = 
+{    async convertPngToGif(inputPath, outputPath) {
         try {
             const image = sharp(inputPath);
             const { data, info } = await image.raw().toBuffer({ resolveWithObject: true });
