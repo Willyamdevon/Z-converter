@@ -6,5 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   close: () => ipcRenderer.send('window:close'),
   openFileDialog: () => ipcRenderer.invoke('open-file-dialog'),
   saveFileDialog: (defaultPath) => ipcRenderer.invoke('save-file-dialog', defaultPath),
-  convertFile: (data) => ipcRenderer.invoke('convert-file', data)
+  convertFile: (data) => ipcRenderer.invoke('convert-file', data),
+  openFolder: (path) => ipcRenderer.send('open-folder', path),
+  openFolderDialog: () => ipcRenderer.invoke('open-folder-dialog'),
 });
