@@ -1,5 +1,5 @@
 const sharp = require('sharp');
-const ico = require('icojs');
+// const ico = require('icojs');
 const { GIFEncoder, quantize, applyPalette } = require('gifenc');
 
 async function convertPngToGif(inputPath, outputPath) {
@@ -88,51 +88,51 @@ async function jpgToPng(inputPath, outputPath) {
   }
 }
 
-async function convertIcoToPngOrJpg(inputPath, outputPath) {
-  try {
-    const icoBuffer = await sharp(inputPath).toBuffer();
-    const images = await ico.parse(icoBuffer);
+// async function convertIcoToPngOrJpg(inputPath, outputPath) {
+//   try {
+//     const icoBuffer = await sharp(inputPath).toBuffer();
+//     const images = await ico.parse(icoBuffer);
     
-    // Конвертируем в PNG/JPG
-    await sharp(images[0].buffer)
-      .toFormat(inputPath.slice(0,-3))
-      .toFile(outputPath);
+//     // Конвертируем в PNG/JPG
+//     await sharp(images[0].buffer)
+//       .toFormat(inputPath.slice(0,-3))
+//       .toFile(outputPath);
     
-    console.log(`✅ ICO → PNG: ${outputPath}`);
-  } catch (err) {
-    console.error('❌ Ошибка:', err);
-  }
-}
+//     console.log(`✅ ICO → PNG: ${outputPath}`);
+//   } catch (err) {
+//     console.error('❌ Ошибка:', err);
+//   }
+// }
 
-async function convertToIco(inputPath, outputPath, sizes = [16, 32, 64]) {
-  try {
-    const images = await Promise.all(
-      sizes.map(size => 
-        sharp(inputPath)
-          .resize(size)
-          .toBuffer()
-      )
-    );
+// async function convertToIco(inputPath, outputPath, sizes = [16, 32, 64]) {
+//   try {
+//     const images = await Promise.all(
+//       sizes.map(size => 
+//         sharp(inputPath)
+//           .resize(size)
+//           .toBuffer()
+//       )
+//     );
 
-    const icoBuffer = await ico.encode(images.map((data, i) => ({
-      width: sizes[i],
-      height: sizes[i],
-      buffer: data
-    })));
+//     const icoBuffer = await ico.encode(images.map((data, i) => ({
+//       width: sizes[i],
+//       height: sizes[i],
+//       buffer: data
+//     })));
 
-    await sharp(icoBuffer).toFile(outputPath);
-    console.log(`✅ Конвертация в ICO успешна: ${outputPath}`);
-  } catch (err) {
-    console.error('❌ Ошибка:', err);
-  }
-}
+//     await sharp(icoBuffer).toFile(outputPath);
+//     console.log(`✅ Конвертация в ICO успешна: ${outputPath}`);
+//   } catch (err) {
+//     console.error('❌ Ошибка:', err);
+//   }
+// }
 
 // Пример использования
-convertToIco('icon.png', 'favicon.ico', [16, 32, 48, 128]);
+// convertToIco('icon.png', 'favicon.ico', [16, 32, 48, 128]);
 // Пример использования
-convertIcoToPng('favicon.ico', 'icon.png');
+// convertIcoToPng('favicon.ico', 'icon.png');
 
-// jpgToPng('source/input.jpg', 'source/output.png');
+jpgToPng('source/input.jpg', 'source/output.png');
 // // Использование
 // pngToJpg('source/input.png', 'source/output.jpg', 90);
 // convertJpgToGif('source/input.jpg', 'source/output.gif', {

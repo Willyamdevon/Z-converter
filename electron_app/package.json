@@ -9,6 +9,8 @@
     "electron": "^28.0.0"
   },
   "dependencies": {
-    "icojs": "^0.19.5"
+    "gifenc": "^1.0.3",
+    "icojs": "^0.19.5",
+    "sharp": "^0.34.2"
   }
 }
