@@ -1,6 +1,8 @@
 #pragma once
 #include <windows.h>
 #include <shlobj.h>
+#include <vector>
+#include <string>
 
 class ShellExt : public IShellExtInit, public IContextMenu {
 public:
@@ -8,7 +10,7 @@ public:
     ~ShellExt();
 
     // IUnknown
-    STDMETHODIMP QueryInterface(REFIID, void**);
+    STDMETHODIMP QueryInterface(REFIID, void** ppv);
     STDMETHODIMP_(ULONG) AddRef();
     STDMETHODIMP_(ULONG) Release();
 
@@ -23,4 +25,7 @@ public:
 private:
     ULONG m_cRef;
     WCHAR m_szFile[MAX_PATH];
+    std::vector<std::wstring> m_formats;
+
+    std::wstring GetFileExtension() const;
 };

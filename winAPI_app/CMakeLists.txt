@@ -9,6 +9,7 @@ add_library(ConvertShellExt SHARED
     ShellExt.cpp
     ClassFactory.cpp
     DllMain.cpp
+    resource.rc
 )
 
 target_compile_definitions(ConvertShellExt PRIVATE UNICODE _UNICODE)
