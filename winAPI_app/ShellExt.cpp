@@ -67,7 +67,7 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
     AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + 1, L"to png");
     AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + 2, L"to jpg");
     AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + 3, L"to jpeg");
-    InsertMenuW(hMenu, indexMenu, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, L"Convert");
+    InsertMenuW(hMenu, indexMenu, MF_BYPOSITION | MF_POPUP, (UINT_PTR)hSubMenu, L"Z-Converter");
 
 
     return MAKE_HRESULT(SEVERITY_SUCCESS, 0, 4); // 3 commands + 1 submenu

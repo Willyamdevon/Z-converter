@@ -1,14 +1,13 @@
 !include "MUI2.nsh"
 
-Name "ConvertShellExt Installer"
-OutFile "ConvertShellExt_Installer.exe"
-InstallDir "$PROGRAMFILES\ConvertShellExt"
+Name "Z-Converter Installer"
+OutFile "Z-Converter_Installer.exe"
+InstallDir "$PROGRAMFILES\ZConvertShellExt"
 
 ; Порядок страниц
 Page directory
 Page instfiles
 Page uninstConfirm
-Page instfiles  ; <-- БЫЛО uninstfiles (ОШИБКА), должно быть instfiles
 
 Section "Install"
     SetOutPath "$INSTDIR"
@@ -22,10 +21,14 @@ Section "Install"
 SectionEnd
 
 Section "Uninstall"
-    ; Удаляем регистрацию
     nsExec::ExecToLog 'regsvr32 /u /s "$INSTDIR\libConvertShellExt.dll"'
 
+    ; Обычное удаление DLL
     Delete "$INSTDIR\libConvertShellExt.dll"
+    ; Если не получилось — то после ребута
+    IfErrors 0 +2
+    Delete /REBOOTOK "$INSTDIR\libConvertShellExt.dll"
+
     Delete "$INSTDIR\Uninstall.exe"
     RMDir "$INSTDIR"
 SectionEnd
