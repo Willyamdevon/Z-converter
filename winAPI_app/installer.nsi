@@ -21,7 +21,7 @@ RequestExecutionLevel admin
 ; СТРАНИЦЫ
 ; ----------------
 !insertmacro MUI_PAGE_WELCOME
-!insertmacro MUI_PAGE_LICENSE "license.txt" ; можно убрать если не нужно
+!insertmacro MUI_PAGE_LICENSE "license.txt"
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
 !insertmacro MUI_PAGE_FINISH
@@ -38,10 +38,8 @@ Section "Install"
     SetOutPath "$INSTDIR"
     File "build\libConvertShellExt.dll"
 
-    ; Регистрируем DLL через regsvr32
     nsExec::ExecToLog 'regsvr32 /s "$INSTDIR\libConvertShellExt.dll"'
 
-    ; Пишем Uninstaller
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 SectionEnd
 

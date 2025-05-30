@@ -83,7 +83,7 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
     std::wstring ext = GetFileExtension();
     for (auto& c : ext) c = towlower(c);
 
-    if (ext == L".jpg" || ext == L".jpeg" || ext == L".png" || ext == L".bmp" || ext == L".webp") {
+    if (ext == L".jpg" || ext == L".jpeg" || ext == L".png" || ext == L".bmp" || ext == L".webp" || ext == L".ico") {
         if (ext != L".png") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to png");
             m_formats.push_back(L"png");
@@ -96,23 +96,42 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to jpeg");
             m_formats.push_back(L"jpeg");
         }
-    } else if (ext == L".mp4" || ext == L".avi" || ext == L".mov") {
-        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp3");
+        if (ext != L".bmp") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to bmp");
+            m_formats.push_back(L"bmp");
+        }
+        if (ext != L".webp") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to webp");
+            m_formats.push_back(L"webp");
+        }
+        if (ext != L".ico") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to ico");
+            m_formats.push_back(L"ico");
+        }
+    } else if (ext == L".mp4" || ext == L".wav" || ext == L".mov" || ext == L".mkv") {
+        if (ext != L".mp4") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp4");
+            m_formats.push_back(L"mp4");
+        }
+        if (ext != L".wav") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to wav");
+            m_formats.push_back(L"wav");
+        }
+        if (ext != L".mov") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mov");
+            m_formats.push_back(L"mov");
+        }
+        if (ext != L".mkv") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mkv");
+            m_formats.push_back(L"mkv");
+        }
+
+        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"mp3");
         m_formats.push_back(L"mp3");
 
-        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to wav");
-        m_formats.push_back(L"wav");
-    } else if (ext == L".pdf" || ext == L".docx") {
-        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to txt");
-        m_formats.push_back(L"txt");
-
-        if (ext != L".pdf") {
-            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to pdf");
-            m_formats.push_back(L"pdf");
-        }
     } else {
-        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to png");
-        m_formats.push_back(L"png");
+        AppendMenuW(hSubMenu, MF_GRAYED, idCmdFirst + commandOffset++, L"Неподдерживаемый тип файла");
+        m_formats.push_back(L"none");
     }
 
     HICON hIcon = (HICON)LoadImageW(GetModuleHandleW(L"libConvertShellExt.dll"),
@@ -139,11 +158,49 @@ STDMETHODIMP ShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO pici) {
     if (cmd == 0 || cmd > (int)m_formats.size())
         return E_FAIL;
 
-    LPCWSTR format = m_formats[cmd - 1].c_str();
+    std::wstring from = GetFileExtension();
+    if (!from.empty() && from[0] == L'.')
+        from = from.substr(1);
+    for (auto& ch : from) ch = towlower(ch);
 
-    WCHAR msg[256];
-    StringCchPrintfW(msg, 256, L"Converting %s to %s...", m_szFile, format);
-    MessageBoxW(NULL, msg, L"Info", MB_OK);
+    LPCWSTR toFormat = m_formats[cmd - 1].c_str();
+    std::wstring to(toFormat);
+
+    std::wstring inputPath(m_szFile);
+    std::wstring outputPath = inputPath;
+
+    size_t dotPos = outputPath.find_last_of(L".");
+    if (dotPos != std::wstring::npos) {
+        outputPath = outputPath.substr(0, dotPos);
+    }
+    outputPath += L"." + to;
+
+    std::wstring exePath = L"Z-Converter.exe";
+
+    std::wstring commandLine = L"\"" + exePath + L"\""
+        + L" --from=" + from
+        + L" --to=" + to
+        + L" --file=\"" + inputPath + L"\""
+        + L" --output=\"" + outputPath + L"\"";
+
+    STARTUPINFOW si = { sizeof(si) };
+    PROCESS_INFORMATION pi;
+    BOOL result = CreateProcessW(
+        NULL,
+        (LPWSTR)commandLine.c_str(),
+        NULL, NULL, FALSE,
+        CREATE_NO_WINDOW,
+        NULL, NULL,
+        &si, &pi
+    );
+
+    if (result) {
+        CloseHandle(pi.hProcess);
+        CloseHandle(pi.hThread);
+    } else {
+        MessageBoxW(NULL, L"Не удалось запустить Z-Converter.exe", L"Ошибка", MB_ICONERROR);
+    }
+
     return S_OK;
 }
 
