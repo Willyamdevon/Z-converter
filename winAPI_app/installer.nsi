@@ -36,9 +36,12 @@ RequestExecutionLevel admin
 ; ----------------
 Section "Install"
     SetOutPath "$INSTDIR"
-    File "build\libConvertShellExt.dll"
+    File "winAPI_app\build\libConvertShellExt.dll"
 
     nsExec::ExecToLog 'regsvr32 /s "$INSTDIR\libConvertShellExt.dll"'
+
+    SetOutPath "$INSTDIR"
+    File /r "electron_app\dist\win-unpacked\*"
 
     WriteUninstaller "$INSTDIR\Uninstall.exe"
 SectionEnd
@@ -52,6 +55,15 @@ Section "Uninstall"
     Delete "$INSTDIR\libConvertShellExt.dll"
     IfErrors 0 +2
     Delete /REBOOTOK "$INSTDIR\libConvertShellExt.dll"
+
+    Delete "$INSTDIR\Z-Converter.exe"
+    Delete "$INSTDIR\*.pak"
+    Delete "$INSTDIR\*.dll"
+    Delete "$INSTDIR\*.bin"
+    Delete "$INSTDIR\*.json"
+    Delete "$INSTDIR\LICENSE*"
+    Delete "$INSTDIR\resources\*.*"
+    RMDir "$INSTDIR\resources"
 
     Delete "$INSTDIR\Uninstall.exe"
     RMDir "$INSTDIR"

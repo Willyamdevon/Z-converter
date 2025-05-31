@@ -100,7 +100,7 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
     std::wstring ext = GetFileExtension();
     for (auto& c : ext) c = towlower(c);
 
-    if (ext == L".jpg" || ext == L".jpeg" || ext == L".png" || ext == L".bmp" || ext == L".webp" || ext == L".ico") {
+    if (ext == L".jpg" || ext == L".png" || ext == L".ico") {
         if (ext != L".png") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to png");
             m_formats.push_back(L"png");
@@ -109,30 +109,18 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to jpg");
             m_formats.push_back(L"jpg");
         }
-        if (ext != L".jpeg") {
-            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to jpeg");
-            m_formats.push_back(L"jpeg");
-        }
-        if (ext != L".bmp") {
-            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to bmp");
-            m_formats.push_back(L"bmp");
-        }
-        if (ext != L".webp") {
-            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to webp");
-            m_formats.push_back(L"webp");
-        }
         if (ext != L".ico") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to ico");
             m_formats.push_back(L"ico");
         }
-    } else if (ext == L".mp4" || ext == L".wav" || ext == L".mov" || ext == L".mkv") {
+        if (ext != L".gif") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to gif");
+            m_formats.push_back(L"gif");
+        }
+    } else if (ext == L".mp4" || ext == L".mov" || ext == L".mkv") {
         if (ext != L".mp4") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp4");
             m_formats.push_back(L"mp4");
-        }
-        if (ext != L".wav") {
-            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to wav");
-            m_formats.push_back(L"wav");
         }
         if (ext != L".mov") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mov");
@@ -143,8 +131,10 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
             m_formats.push_back(L"mkv");
         }
 
-        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"mp3");
+        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp3");
         m_formats.push_back(L"mp3");
+        AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to wav");
+        m_formats.push_back(L"wav");
 
     } else {
         AppendMenuW(hSubMenu, MF_GRAYED, idCmdFirst + commandOffset++, L"Неподдерживаемый тип файла");
