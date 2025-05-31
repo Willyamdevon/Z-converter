@@ -1,8 +1,39 @@
 const sharp = require('sharp');
+///////////////////////////////////////////////////
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegStatic = require('ffmpeg-static');
+const path = require('path');
+const fs = require('fs');
+
+let ffmpegPath = '';
+
+if (fs.existsSync(ffmpegStatic)) {
+  ffmpegPath = ffmpegStatic;
+  console.log("ffmpeg-static path:", ffmpegPath);
+} else {
+  const prodPath = path.join(process.resourcesPath, 'ffmpeg.exe');
+  if (fs.existsSync(prodPath)) {
+    ffmpegPath = prodPath;
+    console.log("prod ffmpeg path:", ffmpegPath);
+  }
+}
+
+if (ffmpegPath) {
+  ffmpeg.setFfmpegPath(ffmpegPath)
+  console.log("FFmpeg path set:", ffmpegPath);
+} else {
+  console.error("FFmpeg path not found!");
+}
+////////////////////////////////////////////////
 const { GIFEncoder, quantize, applyPalette } = require('gifenc');
 
+function createFfmpeg(inputPath) {
+    return ffmpeg(inputPath).setFfmpegPath(ffmpegPath);
+}
+
 module.exports = 
-{    async convertPngToGif(inputPath, outputPath) {
+{    
+    async convertPngToGif(inputPath, outputPath) {
         try {
             const image = sharp(inputPath);
             const { data, info } = await image.raw().toBuffer({ resolveWithObject: true });
@@ -87,5 +118,200 @@ module.exports =
             console.error('Ошибка при конвертации JPG в PNG:', err);
             return { success: false, error: err.message };
         }
+    },
+
+    async convertJpgToIco(inputPath, outputPath, sizes = [16, 32, 64]) {
+    try {
+        // Создаём несколько размеров для ICO
+        const buffers = await Promise.all(
+            sizes.map(size => 
+                sharp(inputPath)
+                    .resize(size)
+                    .toFormat('png')
+                    .toBuffer()
+            )
+        );
+        
+        await sharp({
+            create: {
+                width: sizes[0],
+                height: sizes[0],
+                channels: 4,
+                background: { r: 0, g: 0, b: 0, alpha: 0 }
+            }
+        })
+        .composite(buffers.map((buffer, i) => ({
+            input: buffer,
+            raw: { width: sizes[i], height: sizes[i], channels: 4 }
+        })))
+        .toFile(outputPath);
+        
+        return { success: true, outputPath };
+    } catch (err) {
+        console.error('Ошибка при конвертации JPG в ICO:', err);
+        return { success: false, error: err.message };
+    }
+    },
+
+    async convertIcoToJpg(inputPath, outputPath, size = 256, quality = 80) {
+        try {
+            // Сначала конвертируем в PNG, затем в JPG
+            const pngBuffer = await icoToPng(inputPath, size);
+            await sharp(pngBuffer)
+                .jpeg({ quality })
+                .toFile(outputPath);
+                
+            return { success: true, outputPath };
+        } catch (err) {
+            console.error('Ошибка при конвертации ICO в JPG:', err);
+            return { success: false, error: err.message };
+        }
+    },
+    async convertMkvToMp4(inputPath, outputPath) {
+    const ffmpegCommand = require('fluent-ffmpeg');
+    const ffmpegPath = require('ffmpeg-static');
+
+    return new Promise((resolve, reject) => {
+        ffmpegCommand()
+            .setFfmpegPath(ffmpegPath) // <== ЛОКАЛЬНОЕ задание пути, 100% работает
+            .input(inputPath)
+            .output(outputPath)
+            .videoCodec('libx264')
+            .audioCodec('aac')
+            .on('end', () => resolve({ success: true, outputPath }))
+            .on('error', (err) => {
+                console.error('Ошибка при конвертации MKV в MP4:', err);
+                reject({ success: false, error: err.message });
+            })
+            .run();
+    });
+    },
+    async convertMkvToMp3(inputPath, outputPath, quality = 192) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .noVideo()
+                .audioCodec('libmp3lame')
+                .audioBitrate(quality)
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MKV в MP3:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+
+    async convertMkvToWav(inputPath, outputPath) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .noVideo()
+                .audioCodec('pcm_s16le')
+                .audioChannels(2)
+                .audioFrequency(44100)
+                .format('wav')
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MKV в WAV:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+
+    async convertMkvToMov(inputPath, outputPath) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .videoCodec('mpeg4')
+                .audioCodec('aac')
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MKV в MOV:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+
+    async convertMp4ToMp3(inputPath, outputPath, quality = 192) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .noVideo()
+                .audioCodec('libmp3lame')
+                .audioBitrate(quality)
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MP4 в MP3:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+
+    async convertMp4ToWav(inputPath, outputPath) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .noVideo()
+                .audioCodec('pcm_s16le')
+                .audioChannels(2)
+                .audioFrequency(44100)
+                .format('wav')
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MP4 в WAV:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+
+    async convertMp4ToMov(inputPath, outputPath) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .videoCodec('mpeg4')
+                .audioCodec('aac')
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MP4 в MOV:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+async convertMp3ToWav(inputPath, outputPath) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .audioCodec('pcm_s16le')
+                .audioChannels(2)
+                .audioFrequency(44100)
+                .format('wav')
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MP3 в WAV:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
+    },
+
+    async convertWavToMp3(inputPath, outputPath, quality = 192) {
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .audioCodec('libmp3lame')
+                .audioBitrate(quality)
+                .output(outputPath)
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации WAV в MP3:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
     }
 };
