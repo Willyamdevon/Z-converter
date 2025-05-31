@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, dialog, shell, ipcRenderer } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
 const { convertPngToGif, convertJpgToGif, pngToJpg, jpgToPng } = require('./converterImages');
 const path = require('path');
 
@@ -26,8 +26,6 @@ function createWindow() {
       nodeIntegration: false,
       sandbox: true
     },
-    
-
   });
 
   Menu.setApplicationMenu(null);

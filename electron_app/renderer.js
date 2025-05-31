@@ -3,9 +3,25 @@ const statusElement = document.getElementById('status');
 const convertBtn = document.getElementById('convertBtn');
 const formatSelect = document.getElementById('formatSelect');
 const selectFolder = document.getElementById('selectFolderBtn');
+const nameDoc = document.getElementById("nameDocument")
 // const path = window.require('path');
 
-
+function shortenFilename(filename) {
+  // Разделяем имя файла и расширение
+  const parts = filename.split('.');
+  const extension = parts.length > 1 ? parts.pop() : ''; // Получаем расширение
+  const name = parts.join('.'); // Остальная часть - имя файла (на случай нескольких точек)
+  
+  // Если имя файла длиннее 15 символов, обрезаем его
+  const shortenedName = name.length > 15 
+    ? name.substring(0, 15) + '...' 
+    : name;
+  
+  // Собираем обратно с расширением (если оно было)
+  return extension 
+    ? `${shortenedName}.${extension}`
+    : shortenedName;
+}
 function getBasename(filePath) {
   return filePath.split(/[\\/]/).pop().split('.')[0];
 }
@@ -50,7 +66,7 @@ async function processSelectedFile(filePath) {
     convertBtn.dataset.inputPath = filePath;
 
     const fileName = filePath.split(/[\\/]/).pop();
-    statusElement.textContent = `Выбрано: ${fileName}`;
+    // statusElement.textContent = `Выбрано: ${fileName}`;
     statusElement.className = 'success';
 
     // Автоматически выбираем формат для конвертации
@@ -61,6 +77,25 @@ async function processSelectedFile(filePath) {
     } else if (fileExt === '.gif') {
       formatSelect.value = 'webp';
     }
+    let input = document.getElementById('convertBtn').dataset.inputPath;
+    let name = `${getBasename(input)}.${input.split('.')[1]}`;
+    nameDoc.innerHTML = `<div class="p-3 border border-gray-100 rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-between gap-2 w-full">
+  <div class="flex items-center gap-2 min-w-0 flex-1">
+    <span class="material-symbols-outlined text-primary-600 flex-shrink-0">description</span>
+    <span class="truncate text-sm">${shortenFilename(name)}</span>
+  </div>
+
+  <div class="flex items-center gap-1 min-w-0 flex-shrink-0">
+    <div class="text-sm text-gray-500 break-words" id="statusFile">
+      Ожидает конвертации
+    </div>
+    <button id="deleteFile" class="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+      <span class="material-symbols-outlined text-sm">close</span>
+    </button>
+  </div>
+</div>
+`
+
   } catch (error) {
     console.error('Ошибка обработки файла:', error);
     statusElement.textContent = 'Ошибка: не удалось загрузить файл';
@@ -106,58 +141,77 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
   const inputPath = document.getElementById('convertBtn').dataset.inputPath;
   let folderPath = selectFolder.dataset.folderPath;
   const outputFormat = document.getElementById('formatSelect').value;
-  const statusEl = document.getElementById('status');
+  const statusEl = document.getElementById('statusFile');
   const convertBtn = document.getElementById('convertBtn');
 
   if (!inputPath) {
-    statusEl.textContent = 'Error: No file selected';
+    statusEl.textContent = 'Ошибка: файл не выбран';
     statusEl.className = 'error';
     return;
   }
 
   try {
-    // Блокируем кнопку во время конвертации
+    // Блокируем кнопку и меняем статус на "Конвертация"
     convertBtn.disabled = true;
-    statusEl.textContent = 'Converting... Please wait';
+    statusEl.textContent = 'Конвертация...';
     statusEl.className = 'processing';
-    let result;
-    //TODO: пофичить костыль
+    
     const type = inputPath.slice(-3) + "-to-" + outputFormat.slice(-3);
-    if (!folderPath){
+    let result;
+    
+    if (!folderPath) {
       result = await window.electronAPI.convertFile({
         type,
         inputPath,
-        outputPath: `${inputPath.split('.')[0]}.${outputFormat}` // сохраняем путь к выходному файлу
+        outputPath: `${inputPath.split('.')[0]}.${outputFormat}`
       });
     } else {
       let Path = `${folderPath}/${getBasename(inputPath)}.${outputFormat}`;
       result = await window.electronAPI.convertFile({
         type,
         inputPath,
-        outputPath: Path // сохраняем путь к выходному файлу
+        outputPath: Path
       });
     }
 
     if (result.success) {
-      const fileName = result.outputPath.split(/[\\/]/).pop();
-      statusEl.textContent = `Success! File saved as: ${fileName}`;
+      // Успешная конвертация - меняем статус на "Готово"
+      statusEl.textContent = 'Готово!';
       statusEl.className = 'success';
 
-      // Предлагаем открыть папку с результатом
       setTimeout(() => {
-        if (confirm(`Conversion complete! Would you like to open the output folder ${result.outputPath}?`)) {
+        if (confirm(`Конвертация завершена! Открыть папку с результатом?`)) {
           window.electronAPI.openFolder(result.outputPath);
         }
       }, 500);
     } else {
-      statusEl.textContent = `Error: ${result.error}`;
+      statusEl.textContent = `Ошибка: ${result.error}`;
       statusEl.className = 'error';
     }
   } catch (error) {
-    console.error('Conversion error:', error);
-    statusEl.textContent = `Error: ${error.message || 'Conversion failed'}`;
+    console.error('Ошибка конвертации:', error);
+    statusEl.textContent = `Ошибка: ${error.message || 'Не удалось выполнить конвертацию'}`;
     statusEl.className = 'error';
   } finally {
     convertBtn.disabled = false;
+  }
+});
+document.addEventListener('click', async (event) => {
+  if (event.target.closest('#deleteFile')) {
+    console.log('Удаление файла...');
+
+    const nameDoc = document.getElementById('nameDocument');
+    if (nameDoc) nameDoc.innerHTML = "";
+
+    const convertBtn = document.getElementById('convertBtn');
+    if (convertBtn) convertBtn.dataset.inputPath = "";
+
+    const statusElement = document.getElementById('status');
+    if (statusElement) {
+      statusElement.textContent = '';
+      statusElement.className = '';
+    }
+
+    if (convertBtn) convertBtn.disabled = true;
   }
 });
