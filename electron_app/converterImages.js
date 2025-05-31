@@ -2,12 +2,11 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
-const isDev = require('electron-is-dev'); // npm install electron-is-dev
+const isDev = require('electron-is-dev');
 
 let ffmpegPath = null;
 
 if (isDev) {
-  // В dev-режиме: ffmpeg.exe лежит в ./resources/ рядом с исходниками
   const devPath = path.join(__dirname, 'resources', 'ffmpeg.exe');
   if (fs.existsSync(devPath)) {
     ffmpegPath = devPath;
@@ -16,7 +15,6 @@ if (isDev) {
     console.error("Dev mode: ffmpeg.exe not found in ./resources/");
   }
 } else {
-  // В production-режиме: ffmpeg.exe лежит в resourcesPath
   const prodPath = path.join(process.resourcesPath, 'ffmpeg.exe');
   if (fs.existsSync(prodPath)) {
     ffmpegPath = prodPath;
@@ -33,7 +31,6 @@ if (ffmpegPath) {
   console.error("FFmpeg path not set!");
 }
 
-// Возвращает ffmpeg-экземпляр
 function createFfmpeg(inputPath) {
   return ffmpeg(inputPath);
 }
@@ -130,7 +127,6 @@ module.exports =
 
     async convertJpgToIco(inputPath, outputPath, sizes = [16, 32, 64]) {
     try {
-        // Создаём несколько размеров для ICO
         const buffers = await Promise.all(
             sizes.map(size => 
                 sharp(inputPath)
