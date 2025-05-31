@@ -62,7 +62,7 @@ module.exports =
         }
     },
 
-    async pngToJpg(inputPath, outputPath, quality = 80) {
+    async convertPngToJpg(inputPath, outputPath, quality = 80) {
         try {
             await sharp(inputPath)
                 .flatten({ background: '#ffffff' })
@@ -76,7 +76,7 @@ module.exports =
         }
     },
 
-    async jpgToPng(inputPath, outputPath) {
+    async convertJpgToPng(inputPath, outputPath) {
         try {
             await sharp(inputPath)
                 .png({ compressionLevel: 9 })

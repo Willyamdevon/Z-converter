@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
-const { convertPngToGif, convertJpgToGif, pngToJpg, jpgToPng } = require('./converterImages');
+const { convertPngToGif, convertJpgToGif, convertPngToJpg, convertJpgToPng } = require('./converterImages');
 const path = require('path');
 
 const args = process.argv.slice(1);
@@ -85,9 +85,9 @@ ipcMain.handle('convert-file', async (_, { type, inputPath, outputPath, options 
     case 'jpg-to-gif':
       return await convertJpgToGif(inputPath, outputPath, options);
     case 'png-to-jpg':
-      return await pngToJpg(inputPath, outputPath, options?.quality);
+      return await convertPngToJpg(inputPath, outputPath, options?.quality);
     case 'jpg-to-png':
-      return await jpgToPng(inputPath, outputPath);
+      return await convertJpgToPng(inputPath, outputPath);
     default:
       return { success: false, error: `Unknown conversion type: ${type}` };
   }
