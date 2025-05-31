@@ -1,35 +1,43 @@
-const sharp = require('sharp');
-///////////////////////////////////////////////////
-const ffmpeg = require('fluent-ffmpeg');
-const ffmpegStatic = require('ffmpeg-static');
+const sharp = require('sharp'); 
 const path = require('path');
 const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+const isDev = require('electron-is-dev'); // npm install electron-is-dev
 
-let ffmpegPath = '';
+let ffmpegPath = null;
 
-if (fs.existsSync(ffmpegStatic)) {
-  ffmpegPath = ffmpegStatic;
-  console.log("ffmpeg-static path:", ffmpegPath);
+if (isDev) {
+  // В dev-режиме: ffmpeg.exe лежит в ./resources/ рядом с исходниками
+  const devPath = path.join(__dirname, 'resources', 'ffmpeg.exe');
+  if (fs.existsSync(devPath)) {
+    ffmpegPath = devPath;
+    console.log("Dev mode: ffmpeg.exe path:", ffmpegPath);
+  } else {
+    console.error("Dev mode: ffmpeg.exe not found in ./resources/");
+  }
 } else {
+  // В production-режиме: ffmpeg.exe лежит в resourcesPath
   const prodPath = path.join(process.resourcesPath, 'ffmpeg.exe');
   if (fs.existsSync(prodPath)) {
     ffmpegPath = prodPath;
-    console.log("prod ffmpeg path:", ffmpegPath);
+    console.log("Prod mode: ffmpeg.exe path:", ffmpegPath);
+  } else {
+    console.error("Prod mode: ffmpeg.exe not found in process.resourcesPath");
   }
 }
 
 if (ffmpegPath) {
-  ffmpeg.setFfmpegPath(ffmpegPath)
+  ffmpeg.setFfmpegPath(ffmpegPath);
   console.log("FFmpeg path set:", ffmpegPath);
 } else {
-  console.error("FFmpeg path not found!");
+  console.error("FFmpeg path not set!");
 }
-////////////////////////////////////////////////
-const { GIFEncoder, quantize, applyPalette } = require('gifenc');
 
+// Возвращает ffmpeg-экземпляр
 function createFfmpeg(inputPath) {
-    return ffmpeg(inputPath).setFfmpegPath(ffmpegPath);
+  return ffmpeg(inputPath);
 }
+
 
 module.exports = 
 {    
@@ -242,8 +250,10 @@ module.exports =
                 .audioCodec('libmp3lame')
                 .audioBitrate(quality)
                 .output(outputPath)
+                .on('start', cmd => console.log('[FFmpeg cmd]', cmd))
+                .on('stderr', line => console.log('[FFmpeg stderr]', line))
                 .on('end', () => resolve({ success: true, outputPath }))
-                .on('error', (err) => {
+                .on('error', err => {
                     console.error('Ошибка при конвертации MP4 в MP3:', err);
                     reject({ success: false, error: err.message });
                 })

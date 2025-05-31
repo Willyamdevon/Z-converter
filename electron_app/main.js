@@ -10,6 +10,10 @@ const { convertPngToGif, convertJpgToGif, convertPngToJpg, convertJpgToPng, conv
 
 // ffmpeg.setFfmpegPath(ffmpegPath); 
 
+// const { app } = require('electron');
+console.log('app.isPackaged:', app.isPackaged);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 
 const args = process.argv.slice(1);
 if (args.some(arg => arg.startsWith('--from='))) {
@@ -64,7 +68,7 @@ function createWindow() {
   
   ipcMain.on('window:close', () => win.close());
 
-  win.webContents.openDevTools() // DevTools
+  // win.webContents.openDevTools() // DevTools
 
 }
 

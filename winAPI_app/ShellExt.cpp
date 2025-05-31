@@ -205,6 +205,9 @@ STDMETHODIMP ShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO pici) {
     if (result) {
         CloseHandle(pi.hProcess);
         CloseHandle(pi.hThread);
+        
+        std::wstring command = L"explorer.exe /select,\"" + outputPath + L"\"";
+        ShellExecuteW(NULL, L"open", L"explorer.exe", (L"/select,\"" + outputPath + L"\"").c_str(), NULL, SW_SHOWNORMAL);
     } else {
         MessageBoxW(NULL, L"Не удалось запустить Z-Converter.exe", L"Ошибка", MB_ICONERROR);
     }
