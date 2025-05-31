@@ -4,7 +4,8 @@ const {
   convertPngToGif,
   convertJpgToGif,
   convertPngToJpg,
-  convertJpgToPng
+  convertJpgToPng,
+  convertMp4ToMp3
 } = require('./converterImages');
 
 const converters = {
