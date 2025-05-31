@@ -108,6 +108,14 @@ async function processSelectedFile(filePath) {
         formatSelect.innerHTML = `<option value="mp3">MP3</option>`;
         formatSelect.value = 'mp3';
         break;
+      case '.mov':
+        formatSelect.innerHTML = `
+                  <option value="mp4">MP4</option>
+                  <option value="wav">WAV</option>
+                  <option value="mp3">MP3</option>`;
+        formatSelect.value = 'mp4';
+        break;
+
     }
     let input = document.getElementById('convertBtn').dataset.inputPath;
     let name = `${getBasename(input)}.${input.split('.')[1]}`;
