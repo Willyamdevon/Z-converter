@@ -1,6 +1,15 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
-const { convertPngToGif, convertJpgToGif, convertPngToJpg, convertJpgToPng } = require('./converterImages');
+const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
+const { convertPngToGif, convertJpgToGif, convertPngToJpg, convertJpgToPng, convertMkvToMp4, convertMp4ToMov, convertMp4ToMp3, convertMkvToMp3, convertMkvToWav, convertMkvToMov, convertMp4ToWav, convertMp3ToWav, convertWavToMp3} = require('./converterImages');
+
+
+const ffmpegPath = process.env.NODE_ENV === 'development'
+  ? require('ffmpeg-static')
+  : path.join(process.resourcesPath, 'ffmpeg.exe');
+
+ffmpeg.setFfmpegPath(ffmpegPath); 
+
 
 const args = process.argv.slice(1);
 if (args.some(arg => arg.startsWith('--from='))) {
@@ -59,25 +68,6 @@ function createWindow() {
 
 }
 
-// Обработчик конвертации
-// ipcMain.handle('convert-file', async (_, { inputPath, outputFormat }) => {
-//   try {
-//     const outputPath = getOutputPath(inputPath, `.${outputFormat.toLowerCase()}`);
-//     const inputExt = path.extname(inputPath).slice(1).toLowerCase();
-//     const converterName = `${inputExt}To${outputFormat.toLowerCase()}`;
-
-//     if (!converters[converterName]) {
-//       throw new Error(`Unsupported conversion: ${inputExt} to ${outputFormat}`);
-//     }
-
-//     await converters[converterName](inputPath, outputPath);
-//     return { success: true, outputPath };
-//   } catch (error) {
-//     console.error('Conversion error:', error);
-//     return { success: false, error: error.message };
-//   }
-// });
-
 ipcMain.handle('convert-file', async (_, { type, inputPath, outputPath, options }) => {
   switch(type) {
     case 'png-to-gif':
@@ -88,43 +78,58 @@ ipcMain.handle('convert-file', async (_, { type, inputPath, outputPath, options 
       return await convertPngToJpg(inputPath, outputPath, options?.quality);
     case 'jpg-to-png':
       return await convertJpgToPng(inputPath, outputPath);
+    case 'mkv-to-mp4':
+      return await convertMkvToMp4(inputPath, outputPath);
+    case 'mp4-to-mov':
+      return await convertMp4ToMov(inputPath, outputPath);
+    case 'mp4-to-mp3':
+      return await convertMp4ToMp3(inputPath, outputPath);
+    case 'mkv-to-mp3':
+      return await convertMkvToMp3(inputPath, outputPath);
+    case 'mkv-to-wav':
+      return await convertMkvToWav(inputPath, outputPath);
+    case 'mkv-to-mov':
+      return await convertMkvToMov(inputPath, outputPath);
+    case 'mp4-to-mov':
+      return await convertMp4ToWav(inputPath, outputPath);
+    case 'mp4-to-wav':
+      return await convertMp3ToWav(inputPath, outputPath);
+    case 'wav-to-mp3':
+      return await convertWavToMp3(inputPath, outputPath)
     default:
       return { success: false, error: `Unknown conversion type: ${type}` };
   }
 });
 
 
-// Диалог выбора файла
 ipcMain.handle('open-file-dialog', async () => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'ico'] }
+      { name: 'Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mkv', "mp3", "wav", 'mov'] }
     ]
   });
   return result.filePaths[0];
 });
 
-// Диалог сохранения файла
 ipcMain.handle('save-file-dialog', async (event, defaultPath) => {
   const result = await dialog.showSaveDialog({
     defaultPath,
     filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'ico'] }
+      { name: 'Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mkv', "mp3", "wav", 'mov'] }
     ]
   });
   return result.filePath;
 });
 
 ipcMain.on('open-folder', (event, path) => {
-  // Открываем папку и выделяем файл (но не открываем его)
   shell.showItemInFolder(path);
 });
 
 ipcMain.handle('open-folder-dialog', async () => {
   const result = await dialog.showOpenDialog({
-    properties: ['openDirectory'] // Ключевое отличие!
+    properties: ['openDirectory']
   });
-  return result.filePaths[0]; // Возвращаем первую выбранную папку
+  return result.filePaths[0];
 });
 app.whenReady().then(createWindow);

@@ -14,6 +14,8 @@
     "electron-builder": "^26.0.12"
   },
   "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.3",
     "gifenc": "^1.0.3",
     "icojs": "^0.19.5",
     "pkg": "^5.8.1",
@@ -24,6 +26,9 @@
   "author": "",
   "license": "GPL-3.0",
   "build": {
+    "asarUnpack": [
+      "/node_modules/ffmpeg-static//*"
+    ],
     "appId": "com.yourdomain.zconverter",
     "productName": "Z-Converter",
     "files": [
@@ -41,6 +46,10 @@
       {
         "from": "node_modules/sharp/vendor/lib",
         "to": "sharp/vendor/lib"
+      },
+      {
+        "from": "node_modules/ffmpeg-static/ffmpeg.exe",
+        "to": "Resources/ffmpeg.exe"
       }
     ]
   }

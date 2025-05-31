@@ -4,20 +4,18 @@ const convertBtn = document.getElementById('convertBtn');
 const formatSelect = document.getElementById('formatSelect');
 const selectFolder = document.getElementById('selectFolderBtn');
 const nameDoc = document.getElementById("nameDocument")
+const qualityValue = document.getElementById("qualitySlider")
 // const path = window.require('path');
 
 function shortenFilename(filename) {
-  // Разделяем имя файла и расширение
   const parts = filename.split('.');
-  const extension = parts.length > 1 ? parts.pop() : ''; // Получаем расширение
-  const name = parts.join('.'); // Остальная часть - имя файла (на случай нескольких точек)
+  const extension = parts.length > 1 ? parts.pop() : '';
+  const name = parts.join('.');
   
-  // Если имя файла длиннее 15 символов, обрезаем его
   const shortenedName = name.length > 15 
     ? name.substring(0, 15) + '...' 
     : name;
   
-  // Собираем обратно с расширением (если оно было)
   return extension 
     ? `${shortenedName}.${extension}`
     : shortenedName;
@@ -50,14 +48,14 @@ dropZone.addEventListener('drop', (e) => {
   processSelectedFile(file.path);
 });
 
-// Функция для обработки выбранного файла (аналогично кнопке)
+
 async function processSelectedFile(filePath) {
   try {
-    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
+    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mkv', ".mp3", ".wav", '.mov'];
     const fileExt = filePath.slice(filePath.lastIndexOf('.')).toLowerCase();
 
     if (!validExtensions.includes(fileExt)) {
-      statusElement.textContent = 'Ошибка: выберите изображение (JPG/PNG/GIF/WEBP)';
+      statusElement.textContent = 'Ошибка: такой формат не поддерживается';
       statusElement.className = 'error';
       return;
     }
@@ -65,17 +63,51 @@ async function processSelectedFile(filePath) {
     convertBtn.disabled = false;
     convertBtn.dataset.inputPath = filePath;
 
-    const fileName = filePath.split(/[\\/]/).pop();
-    // statusElement.textContent = `Выбрано: ${fileName}`;
     statusElement.className = 'success';
 
-    // Автоматически выбираем формат для конвертации
-    if (fileExt === '.jpg' || fileExt === '.jpeg') {
-      formatSelect.value = 'png';
-    } else if (fileExt === '.png') {
-      formatSelect.value = 'jpg';
-    } else if (fileExt === '.gif') {
-      formatSelect.value = 'webp';
+
+    console.log()
+    switch (fileExt) {
+      case '.png': 
+        formatSelect.innerHTML = `                  
+        <option value="jpg">JPG</option>
+        <option value="gif">GIF</option>`;
+        formatSelect.value = 'jpg';
+        break;
+      case '.jpg': 
+              formatSelect.innerHTML = `                                   
+                  <option value="png">PNG</option>
+                  <option value="gif">GIF</option>
+                  <option value="ico">ICO</option>`;
+        formatSelect.value = 'png';
+        break;
+      case '.ico': 
+                    formatSelect.innerHTML = `<option value="jpg">JPG</option>`;
+        formatSelect.value = 'jpg';
+        break;
+      case '.mkv':
+        formatSelect.innerHTML = `                                 
+                  <option value="mp4">MP4</option>
+                  <option value="wav">WAV</option>
+                  <option value="mp3">MP3</option>
+                  <option value="mov">MOV</option>`;
+        formatSelect.value = 'mp4';
+        break;
+      case '.mp4':        
+        formatSelect.innerHTML = `                                 
+                  <option value="wav">WAV</option>
+                  <option value="mp3">MP3</option>
+                  <option value="mov">MOV</option>`;
+        formatSelect.value = 'mp3';
+        break;
+      case '.mp3':
+        formatSelect.innerHTML = `<option value="wav">WAV</option>`;
+        formatSelect.value = 'wav';
+        break;
+      case '.wav':
+        formatSelect.innerHTML = `<option value="mp3">MP3</option>`;
+        formatSelect.value = 'mp3';
+        break;
     }
     let input = document.getElementById('convertBtn').dataset.inputPath;
     let name = `${getBasename(input)}.${input.split('.')[1]}`;
@@ -133,7 +165,6 @@ selectFolder.addEventListener('click', async () => {
     selectFolder.dataset.folderPath = folderPath;
   } catch (error) {
     console.error('Ошибка выбора папки:', error);
-    // document.getElementById('folderStatus').textContent = 'Ошибка выбора папки';
   }
 });
 
@@ -151,31 +182,35 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
   }
 
   try {
-    // Блокируем кнопку и меняем статус на "Конвертация"
     convertBtn.disabled = true;
     statusEl.textContent = 'Конвертация...';
     statusEl.className = 'processing';
-    
-    const type = inputPath.slice(-3) + "-to-" + outputFormat.slice(-3);
-    let result;
-    
+    console.log(outputFormat)
+    const type = inputPath.slice(inputPath.lastIndexOf('.')).toLowerCase().slice(1) + "-to-" + outputFormat ;
+    let result, options;
+    if (type == "png-to-jpg") {
+      let options = {quality: qualityValue.value};
+      console.log(options)
+    };
+
     if (!folderPath) {
       result = await window.electronAPI.convertFile({
         type,
         inputPath,
-        outputPath: `${inputPath.split('.')[0]}.${outputFormat}`
+        outputPath: `${inputPath.split('.')[0]}.${outputFormat}`,
+        options
       });
     } else {
       let Path = `${folderPath}/${getBasename(inputPath)}.${outputFormat}`;
       result = await window.electronAPI.convertFile({
         type,
         inputPath,
-        outputPath: Path
+        outputPath: Path,
+        options
       });
     }
 
     if (result.success) {
-      // Успешная конвертация - меняем статус на "Готово"
       statusEl.textContent = 'Готово!';
       statusEl.className = 'success';
 
