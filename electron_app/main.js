@@ -1,14 +1,14 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
-const ffmpeg = require('fluent-ffmpeg');
+// const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const { convertPngToGif, convertJpgToGif, convertPngToJpg, convertJpgToPng, convertMkvToMp4, convertMp4ToMov, convertMp4ToMp3, convertMkvToMp3, convertMkvToWav, convertMkvToMov, convertMp4ToWav, convertMp3ToWav, convertWavToMp3} = require('./converterImages');
 
 
-const ffmpegPath = process.env.NODE_ENV === 'development'
-  ? require('ffmpeg-static')
-  : path.join(process.resourcesPath, 'ffmpeg.exe');
+// const ffmpegPath = process.env.NODE_ENV === 'development'
+//   ? require('ffmpeg-static')
+//   : path.join(process.resourcesPath, 'ffmpeg.exe');
 
-ffmpeg.setFfmpegPath(ffmpegPath); 
+// ffmpeg.setFfmpegPath(ffmpegPath); 
 
 
 const args = process.argv.slice(1);

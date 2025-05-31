@@ -25,7 +25,13 @@
   "keywords": [],
   "author": "",
   "license": "GPL-3.0",
-  "build": {
+  "build": {  
+    "extraResources": [
+    {
+      "from": "node_modules/ffmpeg-static/bin/${os}/${arch}/ffmpeg.exe",
+      "to": "ffmpeg.exe"
+    }
+  ],
     "asarUnpack": [
       "/node_modules/ffmpeg-static//*"
     ],
