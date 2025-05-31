@@ -1,10 +1,10 @@
 !include "MUI2.nsh"
 
 Name "Z-Converter"
-OutFile "Z-Converter_Installer.exe"
+OutFile "Z-Converter_Setup.exe"
 Icon "icon.ico"
 UninstallIcon "icon.ico"
-InstallDir "$PROGRAMFILES\ZConvertShellExt"
+InstallDir "$PROGRAMFILES\ZConverter"
 
 BrandingText "Z-Converter Installer"
 RequestExecutionLevel admin
