@@ -1,16 +1,47 @@
 {
-  "name": "my-electron-app",
+  "name": "z-converter",
   "version": "1.0.0",
   "main": "main.js",
+  "bin": {
+    "z-converter": "main.js"
+  },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^28.0.0"
+    "electron": "^28.3.3",
+    "electron-builder": "^26.0.12"
   },
   "dependencies": {
     "gifenc": "^1.0.3",
     "icojs": "^0.19.5",
+    "pkg": "^5.8.1",
     "sharp": "^0.34.2"
+  },
+  "description": "```shell\r git clone https://github.com/Willyamdevon/cu_converter\r npm init -y\r npm install --save-dev electron\r ```",
+  "keywords": [],
+  "author": "",
+  "license": "GPL-3.0",
+  "build": {
+    "appId": "com.yourdomain.zconverter",
+    "productName": "Z-Converter",
+    "files": [
+      "**/*"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "build/icon.ico"
+    },
+    "extraFiles": [
+      {
+        "from": "node_modules/sharp/build/Release",
+        "to": "sharp/build/Release"
+      },
+      {
+        "from": "node_modules/sharp/vendor/lib",
+        "to": "sharp/vendor/lib"
+      }
+    ]
   }
 }

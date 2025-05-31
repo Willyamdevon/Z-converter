@@ -2,6 +2,19 @@ const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron')
 const { convertPngToGif, convertJpgToGif, pngToJpg, jpgToPng } = require('./converterImages');
 const path = require('path');
 
+const args = process.argv.slice(1);
+if (args.some(arg => arg.startsWith('--from='))) {
+  const { app } = require('electron');
+  const { handleDllConversion } = require('./dll-handler');
+
+  app.whenReady().then(async () => {
+    await handleDllConversion(args);
+    app.quit();
+  });
+  return;
+}
+
+
 function getOutputPath(inputPath, newExtension) {
   return path.join(
     path.dirname(inputPath),

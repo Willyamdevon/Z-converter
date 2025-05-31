@@ -10,6 +10,23 @@ ShellExt::ShellExt() : m_cRef(1) {
 
 ShellExt::~ShellExt() {}
 
+std::wstring GetModulePath() {
+    wchar_t path[MAX_PATH] = {0};
+    HMODULE hModule = nullptr;
+    if (GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+                           (LPCWSTR)GetModulePath,
+                           &hModule)) {
+        GetModuleFileNameW(hModule, path, MAX_PATH);
+        std::wstring fullPath(path);
+        size_t pos = fullPath.find_last_of(L"\\/");
+        if (pos != std::wstring::npos) {
+            return fullPath.substr(0, pos);
+        }
+    }
+    return L"";
+}
+
+
 STDMETHODIMP ShellExt::QueryInterface(REFIID riid, void** ppv) {
     if (riid == IID_IUnknown || riid == IID_IShellExtInit)
         *ppv = (IShellExtInit*)this;
@@ -175,7 +192,8 @@ STDMETHODIMP ShellExt::InvokeCommand(LPCMINVOKECOMMANDINFO pici) {
     }
     outputPath += L"." + to;
 
-    std::wstring exePath = L"Z-Converter.exe";
+    std::wstring exeDir = GetModulePath();
+    std::wstring exePath = exeDir + L"\\Z-Converter.exe";
 
     std::wstring commandLine = L"\"" + exePath + L"\""
         + L" --from=" + from
