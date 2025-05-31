@@ -90,8 +90,6 @@ ipcMain.handle('convert-file', async (_, { type, inputPath, outputPath, options 
       return await convertMkvToWav(inputPath, outputPath);
     case 'mkv-to-mov':
       return await convertMkvToMov(inputPath, outputPath);
-    case 'mp4-to-mov':
-      return await convertMp4ToWav(inputPath, outputPath);
     case 'mp4-to-wav':
       return await convertMp3ToWav(inputPath, outputPath);
     case 'wav-to-mp3':
