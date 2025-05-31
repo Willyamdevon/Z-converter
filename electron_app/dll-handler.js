@@ -12,6 +12,7 @@ const converters = {
   'jpg-gif': convertJpgToGif,
   'png-jpg': convertPngToJpg,
   'jpg-png': convertJpgToPng,
+  'mp4-mp3': convertMp4ToMp3,
 };
 
 async function handleDllConversion(args) {
