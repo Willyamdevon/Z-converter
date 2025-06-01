@@ -5,7 +5,17 @@ const {
   convertJpgToGif,
   convertPngToJpg,
   convertJpgToPng,
-  convertMp4ToMp3
+  convertJpgToIco,
+  convertIcoToJpg,
+  convertMp4ToMp3,
+  convertMkvToMp4,
+  convertMkvToMp3,
+  convertMkvToWav,
+  convertMkvToMov,
+  convertMp4ToWav,
+  convertMp4ToMov,
+  convertMp3ToWav,
+  convertWavToMp3
 } = require('./converterImages');
 
 const converters = {
@@ -13,7 +23,17 @@ const converters = {
   'jpg-gif': convertJpgToGif,
   'png-jpg': convertPngToJpg,
   'jpg-png': convertJpgToPng,
+  'jpg-ico': convertJpgToIco,
+  'ico-jpg': convertIcoToJpg,
   'mp4-mp3': convertMp4ToMp3,
+  'mkv-mp4': convertMkvToMp4,
+  'mkv-mp3': convertMkvToMp3,
+  'mkv-wav': convertMkvToWav,
+  'mkv-mov': convertMkvToMov,
+  'mp4-wav': convertMp4ToWav,
+  'mp4-mov': convertMp4ToMov,
+  'mp3-wav': convertMp3ToWav,
+  'wav-mp3': convertWavToMp3
 };
 
 async function handleDllConversion(args) {

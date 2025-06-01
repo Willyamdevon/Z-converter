@@ -117,7 +117,7 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to gif");
             m_formats.push_back(L"gif");
         }
-    } else if (ext == L".mp4" || ext == L".mov" || ext == L".mkv") {
+    } else if (ext == L".mp4" || ext == L".mkv") {
         if (ext != L".mp4") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp4");
             m_formats.push_back(L"mp4");
@@ -136,6 +136,15 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
         AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to wav");
         m_formats.push_back(L"wav");
 
+    } else if (ext == L".mp3" || ext == L".wav") {
+        if (ext != L".mp3") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp3");
+            m_formats.push_back(L"mp3");
+        }
+        if (ext != L".wav") {
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to wav");
+            m_formats.push_back(L"wav");
+        }
     } else {
         AppendMenuW(hSubMenu, MF_GRAYED, idCmdFirst + commandOffset++, L"Неподдерживаемый тип файла");
         m_formats.push_back(L"none");
