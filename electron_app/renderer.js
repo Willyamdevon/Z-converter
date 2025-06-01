@@ -234,6 +234,8 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
       statusEl.textContent = `Ошибка: ${result.error}`;
       statusEl.className = 'error';
     }
+    deleteBtn.disabled = false;
+    deleteBtn.style.background = "";
   } catch (error) {
     console.error('Ошибка конвертации:', error);
     statusEl.textContent = `Ошибка: ${error.message || 'Не удалось выполнить конвертацию'}`;
