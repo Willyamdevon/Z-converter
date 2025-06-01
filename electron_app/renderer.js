@@ -120,21 +120,21 @@ async function processSelectedFile(filePath) {
     let input = document.getElementById('convertBtn').dataset.inputPath;
     let name = `${getBasename(input)}.${input.split('.')[1]}`;
     nameDoc.innerHTML = `<div class="p-3 border border-gray-100 rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-between gap-2 w-full">
-  <div class="flex items-center gap-2 min-w-0 flex-1">
-    <span class="material-symbols-outlined text-primary-600 flex-shrink-0">description</span>
-    <span class="truncate text-sm">${shortenFilename(name)}</span>
-  </div>
+                              <div class="flex items-center gap-2 min-w-0 flex-1">
+                                <span class="material-symbols-outlined text-primary-600 flex-shrink-0">description</span>
+                                <span class="truncate text-sm">${shortenFilename(name)}</span>
+                              </div>
 
-  <div class="flex items-center gap-1 min-w-0 flex-shrink-0">
-    <div class="text-sm text-gray-500 break-words" id="statusFile">
-      Ожидает конвертации
-    </div>
-    <button id="deleteFile" class="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors">
-      <span class="material-symbols-outlined text-sm">close</span>
-    </button>
-  </div>
-</div>
-`
+                              <div class="flex items-center gap-1 min-w-0 flex-shrink-0">
+                              <div class="text-sm text-gray-500 break-words" id="statusFile">
+                                Ожидает конвертации
+                              </div>
+                                <button id="deleteFile" class="w-6 h-6 flex-shrink-0 flex items-center justify-center rounded-full text-gray-500 hover:bg-red-100 hover:text-red-600 transition-colors">
+                                  <span class="material-symbols-outlined text-sm">close</span>
+                                </button>
+                              </div>
+                              </div>
+                              `
 
   } catch (error) {
     console.error('Ошибка обработки файла:', error);
@@ -182,6 +182,7 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
   const outputFormat = document.getElementById('formatSelect').value;
   const statusEl = document.getElementById('statusFile');
   const convertBtn = document.getElementById('convertBtn');
+  const deleteBtn = document.getElementById('deleteFile');
 
   if (!inputPath) {
     statusEl.textContent = 'Ошибка: файл не выбран';
@@ -190,6 +191,8 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
   }
 
   try {
+    deleteBtn.disabled = true;
+    deleteBtn.style.background = "grey";
     convertBtn.disabled = true;
     statusEl.textContent = 'Конвертация...';
     statusEl.className = 'processing';
