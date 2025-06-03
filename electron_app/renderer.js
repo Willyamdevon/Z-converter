@@ -7,24 +7,37 @@ const nameDoc = document.getElementById("nameDocument")
 const qualityValue = document.getElementById("qualitySlider")
 // const path = window.require('path');
 
+
+const getFilename = (filePath) => {
+  const parts = filePath.replace(/\\/g, '/').split('/');
+  return parts.pop();
+};
+
+const removeExtension = (filename) => {
+  const lastDotIndex = filename.lastIndexOf('.');
+  return lastDotIndex === -1 ? filename : filename.slice(0, lastDotIndex);
+};
 function shortenFilename(filename) {
-  const parts = filename.split('.');
-  const extension = parts.length > 1 ? parts.pop() : '';
-  const name = parts.join('.');
-  
+  const lastDotIndex = filename.lastIndexOf('.');
+  const name = lastDotIndex === -1 ? filename : filename.substring(0, lastDotIndex);
+  const extension = lastDotIndex === -1 ? '' : filename.substring(lastDotIndex + 1);
+
   const shortenedName = name.length > 15 
     ? name.substring(0, 15) + '...' 
     : name;
-  
+
   return extension 
     ? `${shortenedName}.${extension}`
     : shortenedName;
 }
-function getBasename(filePath) {
-  return filePath.split(/[\\/]/).pop().split('.')[0];
+function getBasename(path) {
+  const filename = path.split('/').pop()
+  return filename.split('.').slice(0, -1).join('.');
 }
 
-
+function getBasenameForRender(filePath) {
+  return filePath.split(/[\\/]/).pop().split('.')[0];
+}
 // Обработчик для кнопки "Выбрать файл" (ваш текущий код)
 document.getElementById('selectBtn').addEventListener('click', handleFileSelection);
 
@@ -51,7 +64,7 @@ dropZone.addEventListener('drop', (e) => {
 
 async function processSelectedFile(filePath) {
   try {
-    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mkv', ".mp3", ".wav", '.mov'];
+    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mkv', ".mp3", ".wav", '.mov', ".webp"];
     const fileExt = filePath.slice(filePath.lastIndexOf('.')).toLowerCase();
 
     if (!validExtensions.includes(fileExt)) {
@@ -71,18 +84,28 @@ async function processSelectedFile(filePath) {
       case '.png': 
         formatSelect.innerHTML = `                  
         <option value="jpg">JPG</option>
-        <option value="gif">GIF</option>`;
+        <option value="gif">GIF</option>
+        <option value="webp">WEBP</option>`;
         formatSelect.value = 'jpg';
         break;
       case '.jpg': 
               formatSelect.innerHTML = `                                   
                   <option value="png">PNG</option>
                   <option value="gif">GIF</option>
-                  <option value="ico">ICO</option>`;
+                  <option value="ico">ICO</option>
+                  <option value="webp">WEBP</option>`;
+        formatSelect.value = 'png';
+        break;
+      case '.jpeg': 
+              formatSelect.innerHTML = `                                   
+                  <option value="png">PNG</option>
+                  <option value="gif">GIF</option>
+                  <option value="ico">ICO</option>
+                  <option value="webp">WEBP</option>`;
         formatSelect.value = 'png';
         break;
       case '.ico': 
-                    formatSelect.innerHTML = `<option value="jpg">JPG</option>`;
+        formatSelect.innerHTML = `<option value="jpg">JPG</option>`;
         formatSelect.value = 'jpg';
         break;
       case '.mkv':
@@ -115,10 +138,18 @@ async function processSelectedFile(filePath) {
                   <option value="mp3">MP3</option>`;
         formatSelect.value = 'mp4';
         break;
+      case '.webp':
+        formatSelect.innerHTML = `                                   
+                  <option value="png">PNG</option>
+                  <option value="jpg">JPG</option>`;
+        formatSelect.value = 'png';
+        break;
+
 
     }
     let input = document.getElementById('convertBtn').dataset.inputPath;
-    let name = `${getBasename(input)}.${input.split('.')[1]}`;
+    let name = `${getBasenameForRender(input)}.${input.split('.')[input.split('.').length - 1]}`;
+    console.log(name)
     nameDoc.innerHTML = `<div class="p-3 border border-gray-100 rounded-lg hover:bg-slate-50 transition-colors flex items-center justify-between gap-2 w-full">
                               <div class="flex items-center gap-2 min-w-0 flex-1">
                                 <span class="material-symbols-outlined text-primary-600 flex-shrink-0">description</span>
@@ -197,7 +228,7 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
     statusEl.textContent = 'Конвертация...';
     statusEl.className = 'processing';
     console.log(outputFormat)
-    const type = inputPath.slice(inputPath.lastIndexOf('.')).toLowerCase().slice(1) + "-to-" + outputFormat ;
+    const type = inputPath.split('.').pop().toLowerCase() + "-to-" + outputFormat ;
     let result, options;
     if (type == "png-to-jpg") {
       let options = {quality: qualityValue.value};
@@ -208,15 +239,17 @@ document.getElementById('convertBtn').addEventListener('click', async () => {
       result = await window.electronAPI.convertFile({
         type,
         inputPath,
-        outputPath: `${inputPath.split('.')[0]}.${outputFormat}`,
+        outputPath: `${inputPath.split('.').slice(0, -1).join('.')}.${outputFormat}`,
         options
       });
     } else {
-      let Path = `${folderPath}/${getBasename(inputPath)}.${outputFormat}`;
+      const filename = getFilename(inputPath);
+      const nameWithoutExt = removeExtension(filename);
+      const outputPath = `${folderPath.replace(/\\/g, '/')}/${nameWithoutExt}.${outputFormat}`;
       result = await window.electronAPI.convertFile({
         type,
         inputPath,
-        outputPath: Path,
+        outputPath: outputPath,
         options
       });
     }
