@@ -68,7 +68,7 @@ function createWindow() {
   
   ipcMain.on('window:close', () => win.close());
 
-  // win.webContents.openDevTools() // DevTools
+  win.webContents.openDevTools() // DevTools
 
 }
 
@@ -98,6 +98,10 @@ ipcMain.handle('convert-file', async (_, { type, inputPath, outputPath, options 
       return await convertMp3ToWav(inputPath, outputPath);
     case 'wav-to-mp3':
       return await convertWavToMp3(inputPath, outputPath)
+    case 'jpeg-to-png':
+      return await convertJpgToPng(inputPath, outputPath);
+    case 'jpeg-to-gif':
+      return await convertJpgToGif(inputPath, outputPath, options);
     default:
       return { success: false, error: `Unknown conversion type: ${type}` };
   }
