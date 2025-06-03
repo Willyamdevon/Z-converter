@@ -100,7 +100,7 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
     std::wstring ext = GetFileExtension();
     for (auto& c : ext) c = towlower(c);
 
-    if (ext == L".jpg" || ext == L".png" || ext == L".ico") {
+    if (ext == L".jpg" || ext == L".png" || ext == L".ico" || ext == L".webp") {
         if (ext != L".png") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to png");
             m_formats.push_back(L"png");
@@ -129,6 +129,10 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
         if (ext != L".mkv") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mkv");
             m_formats.push_back(L"mkv");
+        }
+        if (ext != L".webp"){
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to webp");
+            m_formats.push_back(L"webp");
         }
 
         AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp3");
