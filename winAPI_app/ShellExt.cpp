@@ -117,6 +117,11 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to gif");
             m_formats.push_back(L"gif");
         }
+        if (ext != L".webp"){
+            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to webp");
+            m_formats.push_back(L"webp");
+        }
+
     } else if (ext == L".mp4" || ext == L".mkv") {
         if (ext != L".mp4") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp4");
@@ -129,10 +134,6 @@ STDMETHODIMP ShellExt::QueryContextMenu(HMENU hMenu, UINT indexMenu, UINT idCmdF
         if (ext != L".mkv") {
             AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mkv");
             m_formats.push_back(L"mkv");
-        }
-        if (ext != L".webp"){
-            AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to webp");
-            m_formats.push_back(L"webp");
         }
 
         AppendMenuW(hSubMenu, MF_STRING, idCmdFirst + commandOffset++, L"to mp3");
