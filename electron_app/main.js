@@ -73,7 +73,7 @@ function createWindow() {
   
   ipcMain.on('window:close', () => win.close());
 
-  win.webContents.openDevTools() // DevTools
+  // win.webContents.openDevTools() // DevTools
 
 }
 
