@@ -15,7 +15,11 @@ const {
   convertMp4ToWav,
   convertMp4ToMov,
   convertMp3ToWav,
-  convertWavToMp3
+  convertWavToMp3,
+  convertWebpToJpg,
+  convertPngToWebp,
+  convertWebpToPng,
+  convertJpgToWebp
 } = require('./converterImages');
 
 const converters = {
@@ -33,7 +37,13 @@ const converters = {
   'mp4-wav': convertMp4ToWav,
   'mp4-mov': convertMp4ToMov,
   'mp3-wav': convertMp3ToWav,
-  'wav-mp3': convertWavToMp3
+  'wav-mp3': convertWavToMp3,
+  'webp-jpg': convertWebpToJpg,
+  'png-webp': convertPngToWebp,
+  'webp-png': convertWebpToPng,
+  'jpg-webp': convertJpgToWebp,
+
+    
 };
 
 async function handleDllConversion(args) {
