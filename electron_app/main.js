@@ -1,7 +1,12 @@
 const { app, BrowserWindow, ipcMain, Menu, dialog, shell } = require('electron');
 // const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
-const { convertPngToGif, convertJpgToGif, convertPngToJpg, convertJpgToPng, convertMkvToMp4, convertMp4ToMov, convertMp4ToMp3, convertMkvToMp3, convertMkvToWav, convertMkvToMov, convertMp4ToWav, convertMp3ToWav, convertWavToMp3} = require('./converterImages');
+const { convertPngToGif, convertJpgToGif, convertPngToJpg, 
+  convertJpgToPng, convertMkvToMp4, convertMp4ToMov, 
+  convertMp4ToMp3, convertMkvToMp3, convertMkvToWav,
+  convertMkvToMov, convertMp4ToWav, convertMp3ToWav,
+  convertWavToMp3, convertJpgToWebp, convertWebpToJpg,
+  convertPngToWebp, convertWebpToPng} = require('./converterImages');
 
 
 // const ffmpegPath = process.env.NODE_ENV === 'development'
@@ -102,6 +107,17 @@ ipcMain.handle('convert-file', async (_, { type, inputPath, outputPath, options 
       return await convertJpgToPng(inputPath, outputPath);
     case 'jpeg-to-gif':
       return await convertJpgToGif(inputPath, outputPath, options);
+    case 'mp4-to-wav':
+      return await convertMp4ToWav(inputPath, outputPath);
+    case 'jpg-to-webp':
+      return await convertJpgToWebp(inputPath, outputPath);
+    case 'webp-to-jpg':
+      return await convertWebpToJpg(inputPath, outputPath);
+    case 'png-to-webp':
+      return await convertPngToWebp(inputPath, outputPath);
+    case 'webp-to-png':
+      return await convertWebpToPng(inputPath, outputPath);
+
     default:
       return { success: false, error: `Unknown conversion type: ${type}` };
   }
@@ -112,7 +128,7 @@ ipcMain.handle('open-file-dialog', async () => {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [
-      { name: 'Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mkv', "mp3", "wav", 'mov'] }
+      { name: 'Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mkv', "mp3", "wav", 'mov', 'webp'] }
     ]
   });
   return result.filePaths[0];
@@ -122,7 +138,7 @@ ipcMain.handle('save-file-dialog', async (event, defaultPath) => {
   const result = await dialog.showSaveDialog({
     defaultPath,
     filters: [
-      { name: 'Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mkv', "mp3", "wav", 'mov'] }
+      { name: 'Files', extensions: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mkv', "mp3", "wav", 'mov', 'webp'] }
     ]
   });
   return result.filePath;

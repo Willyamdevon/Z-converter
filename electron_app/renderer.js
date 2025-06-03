@@ -64,7 +64,7 @@ dropZone.addEventListener('drop', (e) => {
 
 async function processSelectedFile(filePath) {
   try {
-    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mkv', ".mp3", ".wav", '.mov'];
+    const validExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.mp4', '.mkv', ".mp3", ".wav", '.mov', ".webp"];
     const fileExt = filePath.slice(filePath.lastIndexOf('.')).toLowerCase();
 
     if (!validExtensions.includes(fileExt)) {
@@ -84,18 +84,28 @@ async function processSelectedFile(filePath) {
       case '.png': 
         formatSelect.innerHTML = `                  
         <option value="jpg">JPG</option>
-        <option value="gif">GIF</option>`;
+        <option value="gif">GIF</option>
+        <option value="webp">WEBP</option>`;
         formatSelect.value = 'jpg';
         break;
       case '.jpg': 
               formatSelect.innerHTML = `                                   
                   <option value="png">PNG</option>
                   <option value="gif">GIF</option>
-                  <option value="ico">ICO</option>`;
+                  <option value="ico">ICO</option>
+                  <option value="webp">WEBP</option>`;
+        formatSelect.value = 'png';
+        break;
+      case '.jpeg': 
+              formatSelect.innerHTML = `                                   
+                  <option value="png">PNG</option>
+                  <option value="gif">GIF</option>
+                  <option value="ico">ICO</option>
+                  <option value="webp">WEBP</option>`;
         formatSelect.value = 'png';
         break;
       case '.ico': 
-                    formatSelect.innerHTML = `<option value="jpg">JPG</option>`;
+        formatSelect.innerHTML = `<option value="jpg">JPG</option>`;
         formatSelect.value = 'jpg';
         break;
       case '.mkv':
@@ -128,6 +138,13 @@ async function processSelectedFile(filePath) {
                   <option value="mp3">MP3</option>`;
         formatSelect.value = 'mp4';
         break;
+      case '.webp':
+        formatSelect.innerHTML = `                                   
+                  <option value="png">PNG</option>
+                  <option value="jpg">JPG</option>`;
+        formatSelect.value = 'png';
+        break;
+
 
     }
     let input = document.getElementById('convertBtn').dataset.inputPath;

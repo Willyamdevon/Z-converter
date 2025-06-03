@@ -318,5 +318,54 @@ async convertMp3ToWav(inputPath, outputPath) {
                 })
                 .run();
         });
+    },
+    async convertJpgToWebp(inputPath, outputPath, quality = 80) {
+        try {            
+            await sharp(inputPath)
+                .webp({ quality })
+                .toFile(outputPath);
+            console.log(`Конвертация JPG -> WEBP завершена: ${outputPath}`);
+            return { success: true, outputPath };
+
+        } catch(e) {
+            return { success: false, error: e.message };
+        }
+    },
+
+    async convertWebpToJpg(inputPath, outputPath, quality = 85) {
+        try {
+            await sharp(inputPath)
+                .jpeg({ quality })
+                .toFile(outputPath);
+            console.log(`Конвертация WEBP -> JPG завершена: ${outputPath}`);
+            return { success: true, outputPath };
+        } catch(e) {
+            return { success: false, error: e.message };
+        }
+    },
+
+    async convertPngToWebp(inputPath, outputPath, quality = 90) {
+        try {
+            await sharp(inputPath)
+                .webp({ quality })
+                .toFile(outputPath);
+            console.log(`Конвертация PNG -> WEBP завершена: ${outputPath}`);
+            return { success: true, outputPath };
+        }  catch(e) {
+            return { success: false, error: e.message };
+        }
+    },
+
+    async convertWebpToPng(inputPath, outputPath) {
+        try {
+            await sharp(inputPath)
+                .png()
+                .toFile(outputPath);
+            console.log(`Конвертация WEBP -> PNG завершена: ${outputPath}`);
+            return { success: true, outputPath };
+        }  catch(e) {
+            return { success: false, error: e.message };
+        }
     }
+
 };
