@@ -172,24 +172,23 @@ module.exports =
         }
     },
     async convertMkvToMp4(inputPath, outputPath) {
-    const ffmpegCommand = require('fluent-ffmpeg');
-    const ffmpegPath = require('ffmpeg-static');
-
-    return new Promise((resolve, reject) => {
-        ffmpegCommand()
-            .setFfmpegPath(ffmpegPath) // <== ЛОКАЛЬНОЕ задание пути, 100% работает
-            .input(inputPath)
-            .output(outputPath)
-            .videoCodec('libx264')
-            .audioCodec('aac')
-            .on('end', () => resolve({ success: true, outputPath }))
-            .on('error', (err) => {
-                console.error('Ошибка при конвертации MKV в MP4:', err);
-                reject({ success: false, error: err.message });
-            })
-            .run();
-    });
+        return new Promise((resolve, reject) => {
+            createFfmpeg(inputPath)
+                .setFfmpegPath(ffmpegPath)
+                .videoCodec('libx264')
+                .audioCodec('aac')
+                .output(outputPath)
+                .on('start', cmd => console.log('[FFmpeg cmd]', cmd))
+                .on('stderr', line => console.log('[FFmpeg stderr]', line))
+                .on('end', () => resolve({ success: true, outputPath }))
+                .on('error', (err) => {
+                    console.error('Ошибка при конвертации MKV в MP4:', err);
+                    reject({ success: false, error: err.message });
+                })
+                .run();
+        });
     },
+
     async convertMkvToMp3(inputPath, outputPath, quality = 192) {
         return new Promise((resolve, reject) => {
             createFfmpeg(inputPath)
